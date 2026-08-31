@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ljetno kino pod zvijezdama — Motovun</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Tokens ─── */
+    :root {
+      --night:    #0D1B2A;
+      --night-mid:#12243A;
+      --gold:     #F2C94C;
+      --stone:    #E8E0D0;
+      --olive:    #4A7C59;
+      --muted:    #8BA3B4;
+      --film-gap: 14px;
+    }
+
+    /* ─── Reset ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--night);
+      color: var(--stone);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ─── Film strip divider ─── */
+    .filmstrip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 0 0 0;
+      overflow: hidden;
+      height: 20px;
+      opacity: 0.25;
+    }
+    .filmstrip span {
+      display: inline-block;
+      width: 16px;
+      height: 14px;
+      border: 1.5px solid var(--stone);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 64px;
+      background: rgba(13, 27, 42, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(242, 201, 76, 0.12);
+      transition: background 0.3s;
+    }
+    .logo {
+      font-family: 'Fraunces', serif;
+      font-size: 1rem;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: pulse 2.8s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+    nav {
+      display: flex;
+      gap: 36px;
+    }
+    nav a {
+      font-size: 0.8rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--stone); }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 0 48px;
+      padding-top: 64px; /* header height */
+      position: relative;
+      overflow: hidden;
+      gap: 48px;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 55% 60% at 75% 45%, rgba(74, 124, 89, 0.13) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 50% at 10% 70%, rgba(242, 201, 76, 0.06) 0%, transparent 55%),
+        var(--night);
+    }
+
+    /* Stars */
+    .stars {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .star {
+      position: absolute;
+      background: var(--stone);
+      border-radius: 50%;
+      animation: twinkle var(--d, 3s) ease-in-out infinite var(--del, 0s);
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: var(--min, 0.2); }
+      50% { opacity: var(--max, 0.9); }
+    }
+
+    /* ── Projector beam (decorative, bottom-left) ── */
+    .projector-wrap {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 320px;
+      height: 320px;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .proj-source {
+      position: absolute;
+      bottom: 32px;
+      left: 24px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 18px 6px rgba(242,201,76,0.5), 0 0 40px 16px rgba(242,201,76,0.15);
+      animation: projPulse 3s ease-in-out infinite;
+    }
+    @keyframes projPulse {
+      0%,100% { opacity: 1; box-shadow: 0 0 18px 6px rgba(242,201,76,0.5), 0 0 40px 16px rgba(242,201,76,0.15); }
+      50%      { opacity: 0.75; box-shadow: 0 0 10px 3px rgba(242,201,76,0.3), 0 0 28px 10px rgba(242,201,76,0.08); }
+    }
+    .proj-beam {
+      position: absolute;
+      bottom: 39px;
+      left: 31px;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      /* Cone pointing upper-right */
+      border-width: 0 160px 260px 0;
+      border-color: transparent rgba(242,201,76,0.04) transparent transparent;
+      transform-origin: left bottom;
+      animation: beamSway 6s ease-in-out infinite;
+      filter: blur(2px);
+    }
+    @keyframes beamSway {
+      0%,100% { transform: rotate(-2deg); }
+      50%      { transform: rotate(4deg); }
+    }
+    /* Dust particles in beam */
+    .proj-dust {
+      position: absolute;
+      bottom: 39px;
+      left: 31px;
+      width: 120px;
+      height: 200px;
+    }
+    .dust {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: rgba(242,201,76,0.6);
+      animation: floatDust var(--fd, 4s) ease-in-out infinite var(--fdel, 0s);
+    }
+    @keyframes floatDust {
+      0%   { transform: translate(0,0); opacity:0; }
+      20%  { opacity: 0.7; }
+      80%  { opacity: 0.3; }
+      100% { transform: translate(var(--fx,20px), var(--fy,-80px)); opacity:0; }
+    }
+
+    /* ── Hero left column ── */
+    .hero-left {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px 0;
+    }
+    .hero-eyebrow {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.6;
+    }
+    .hero h1 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2.8rem, 5vw, 5.2rem);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--stone);
+      margin-bottom: 28px;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--gold);
+      font-weight: 300;
+    }
+    .hero-sub {
+      font-size: 0.98rem;
+      color: var(--muted);
+      line-height: 1.85;
+      margin-bottom: 48px;
+      max-width: 420px;
+    }
+    .hero-meta {
+      display: flex;
+      gap: 36px;
+      align-items: center;
+    }
+    .hero-stat {
+      display: flex;
+      flex-direction: column;
+    }
+    .hero-stat strong {
+      font-family: 'Fraunces', serif;
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: var(--stone);
+      line-height: 1;
+    }
+    .hero-stat span {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+    .hero-divider {
+      width: 1px;
+      height: 36px;
+      background: rgba(232, 224, 208, 0.15);
+    }
+
+    /* ── Hero right column — image frame ── */
+    .hero-right {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 0;
+    }
+    .hero-image-frame {
+      position: relative;
+      width: 100%;
+      max-width: 520px;
+      aspect-ratio: 4 / 5;
+      border-radius: 28px;
+      overflow: hidden;
+      background: var(--night-mid);
+      box-shadow:
+        0 0 0 1px rgba(242,201,76,0.1),
+        0 32px 80px rgba(0,0,0,0.5),
+        0 8px 24px rgba(0,0,0,0.3);
+    }
+    /* Placeholder shown when no real image is set */
+    .hero-image-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 28px;
+      display: block;
+    }
+    .hero-image-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      border-radius: 28px;
+    }
+    .placeholder-icon {
+      width: 64px;
+      height: 64px;
+      border: 1.5px solid rgba(242,201,76,0.25);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(242,201,76,0.4);
+      font-size: 1.6rem;
+    }
+    .placeholder-text {
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(139, 163, 180, 0.35);
+    }
+    /* Soft glow behind the frame */
+    .hero-image-glow {
+      position: absolute;
+      inset: -40px;
+      background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(74,124,89,0.18) 0%, transparent 70%);
+      pointer-events: none;
+      border-radius: 50%;
+      z-index: -1;
+    }
+    /* Corner accent marks */
+    .frame-corner {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-color: rgba(242,201,76,0.3);
+      border-style: solid;
+    }
+    .frame-corner.tl { top: 12px; left: 12px; border-width: 1.5px 0 0 1.5px; }
+    .frame-corner.tr { top: 12px; right: 12px; border-width: 1.5px 1.5px 0 0; }
+    .frame-corner.bl { bottom: 12px; left: 12px; border-width: 0 0 1.5px 1.5px; }
+    .frame-corner.br { bottom: 12px; right: 12px; border-width: 0 1.5px 1.5px 0; }
+
+    /* Scroll cue */
+    .scroll-cue {
+      position: absolute;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0.35;
+    }
+    .scroll-cue span {
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px;
+      height: 44px;
+      background: linear-gradient(to bottom, var(--stone), transparent);
+      animation: scrollDown 2s ease-in-out infinite;
+    }
+    @keyframes scrollDown {
+      0%   { transform: scaleY(0); transform-origin: top; }
+      50%  { transform: scaleY(1); transform-origin: top; }
+      51%  { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+
+    /* ─── SECTIONS ─── */
+    section {
+      padding: 100px 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .section-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 56px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .section-eyebrow::before {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.6;
+    }
+
+    /* ─── PROGRAM ─── */
+    #program {
+      max-width: 100%;
+      padding: 100px 48px;
+    }
+    .program-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3px;
+    }
+    .day-card {
+      position: relative;
+      background: var(--night-mid);
+      padding: 48px 44px;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+    .day-card:hover {
+      background: #162d45;
+    }
+    .day-roman {
+      position: absolute;
+      top: -10px;
+      right: 16px;
+      font-family: 'Fraunces', serif;
+      font-size: 9rem;
+      font-weight: 700;
+      color: rgba(242, 201, 76, 0.05);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      transition: color 0.3s;
+    }
+    .day-card:hover .day-roman {
+      color: rgba(242, 201, 76, 0.09);
+    }
+    .day-label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 28px;
+    }
+    .film-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .film-item {
+      display: flex;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(232, 224, 208, 0.07);
+      align-items: flex-start;
+    }
+    .film-item:last-child {
+      border-bottom: none;
+    }
+    .film-type {
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--olive);
+      background: rgba(74, 124, 89, 0.12);
+      padding: 3px 8px;
+      border-radius: 2px;
+      white-space: nowrap;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+    .film-type.short {
+      color: var(--muted);
+      background: rgba(139, 163, 180, 0.1);
+    }
+    .film-type.doc {
+      color: #c0a87e;
+      background: rgba(192, 168, 126, 0.1);
+    }
+    .film-type.anim {
+      color: #a67cc4;
+      background: rgba(166, 124, 196, 0.1);
+    }
+    .film-type.art {
+      color: #7cbecc;
+      background: rgba(124, 190, 204, 0.1);
+    }
+    .film-type.home {
+      color: #e0876a;
+      background: rgba(224, 135, 106, 0.1);
+    }
+    .film-name {
+      font-family: 'Fraunces', serif;
+      font-size: 1.05rem;
+      font-weight: 400;
+      color: var(--stone);
+      line-height: 1.3;
+    }
+    .film-separator {
+      padding: 10px 0 4px;
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(139, 163, 180, 0.4);
+      border-bottom: 1px solid rgba(232, 224, 208, 0.04);
+    }
+
+    /* ─── LOCATION ─── */
+    #lokacija {
+      max-width: 1200px;
+    }
+    .location-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .location-visual {
+      aspect-ratio: 4/3;
+      background: var(--night-mid);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 28px;
+      box-shadow:
+        0 0 0 1px rgba(242,201,76,0.1),
+        0 24px 60px rgba(0,0,0,0.45);
+    }
+    .location-visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 28px;
+      display: block;
+    }
+    .location-info h2 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      font-weight: 300;
+      line-height: 1.15;
+      margin-bottom: 24px;
+      color: var(--stone);
+    }
+    .location-info h2 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+    .location-info p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.9;
+      margin-bottom: 36px;
+    }
+    .location-detail {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .loc-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 0.85rem;
+    }
+    .loc-icon {
+      width: 34px;
+      height: 34px;
+      border: 1px solid rgba(242, 201, 76, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--gold);
+      font-size: 0.9rem;
+    }
+
+    /* ─── CONTACT ─── */
+    #kontakt {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 100px 48px;
+      text-align: center;
+    }
+    #kontakt h2 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 300;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    #kontakt h2 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+    #kontakt > p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-bottom: 52px;
+    }
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      text-align: left;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .field label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .field input,
+    .field textarea,
+    .field select {
+      background: var(--night-mid);
+      border: 1px solid rgba(232, 224, 208, 0.1);
+      color: var(--stone);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 300;
+      padding: 14px 16px;
+      border-radius: 0;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: rgba(139, 163, 180, 0.4);
+    }
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: rgba(242, 201, 76, 0.4);
+    }
+    .field textarea {
+      resize: vertical;
+      min-height: 130px;
+    }
+    .field select option {
+      background: var(--night-mid);
+    }
+    .btn-submit {
+      margin-top: 12px;
+      background: var(--gold);
+      color: var(--night);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 17px 44px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      align-self: flex-start;
+    }
+    .btn-submit:hover {
+      background: #f5d370;
+      transform: translateY(-1px);
+    }
+    .btn-submit:active { transform: translateY(0); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid rgba(232, 224, 208, 0.07);
+      padding: 40px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-logo {
+      font-family: 'Fraunces', serif;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .footer-note {
+      font-size: 0.75rem;
+      color: rgba(139, 163, 180, 0.4);
+      letter-spacing: 0.05em;
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 1024px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 100px 40px 60px;
+        gap: 48px;
+        min-height: auto;
+      }
+      .hero-right { justify-content: flex-start; }
+      .hero-image-frame { max-width: 420px; aspect-ratio: 16/10; }
+    }
+    @media (max-width: 900px) {
+      header { padding: 0 24px; }
+      nav { gap: 22px; }
+      section, #program, #kontakt { padding: 72px 24px; }
+      .days-grid { grid-template-columns: 1fr; }
+      .location-grid { grid-template-columns: 1fr; gap: 40px; }
+      footer { padding: 30px 24px; flex-direction: column; gap: 12px; text-align: center; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      nav { display: none; }
+      .hero { padding: 88px 24px 48px; }
+      .hero h1 { font-size: 2.6rem; }
+      .hero-meta { flex-wrap: wrap; gap: 20px; }
+      .hero-image-frame { aspect-ratio: 4/3; }
+    }
+
+    /* ─── Fade-in on scroll ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <div class="logo-dot"></div>
+      Ljetno kino
+    </div>
+    <nav>
+      <a href="#program">Program</a>
+      <a href="#lokacija">Lokacija</a>
+      <a href="#kontakt">Kontakt</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+
+    <!-- Stars -->
+    <div class="stars" id="stars"></div>
+
+    <!-- Projector effect — bottom left corner -->
+    <div class="projector-wrap">
+      <div class="proj-beam"></div>
+      <div class="proj-dust" id="projDust"></div>
+      <div class="proj-source"></div>
+    </div>
+
+    <!-- LEFT: text -->
+    <div class="hero-left">
+      <div class="hero-eyebrow">Motovun, Istra &mdash; Ljeto 2026</div>
+      <h1>Ljetno kino<br><em>pod zvijezdama</em></h1>
+      <p class="hero-sub">
+        Četiri večeri filmova, jedna srednjovjekovna tvrđava, beskrajno nebo.
+        Gdje istarski vjetar nosi priče sa srebrnog platna.
+      </p>
+      <div class="hero-meta">
+        <div class="hero-stat">
+          <strong>4</strong>
+          <span>Festivalske večeri</span>
+        </div>
+        <div class="hero-divider"></div>
+        <div class="hero-stat">
+          <strong>12</strong>
+          <span>Filmova</span>
+        </div>
+        <div class="hero-divider"></div>
+        <div class="hero-stat">
+          <strong>1</strong>
+          <span>Nezaboravan ambijent i doživljaj</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: image frame -->
+    <div class="hero-right">
+      <div class="hero-image-glow"></div>
+      <div class="hero-image-frame">
+        <!--
+          Zamijeni src s putanjom do svoje slike, npr:
+          <img src="images/kino-hero.jpg" alt="Ljetno kino pod zvijezdama" />
+          Za sad je prikazan placeholder.
+        -->
+        <div class="hero-image-placeholder">
+          <div class="placeholder-icon">⬡</div>
+          <span class="placeholder-text">Vaša fotografija ovdje</span>
+        </div>
+        <!-- Corner accents -->
+        <div class="frame-corner tl"></div>
+        <div class="frame-corner tr"></div>
+        <div class="frame-corner bl"></div>
+        <div class="frame-corner br"></div>
+      </div>
+    </div>
+
+    <div class="scroll-cue">
+      <span>Skrolaj</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- FILMSTRIP -->
+  <div style="background: var(--night); padding: 0 0 0 0; overflow:hidden;">
+    <div class="filmstrip" id="filmstrip-top"></div>
+  </div>
+
+  <!-- PROGRAM -->
+  <div id="program" style="background: var(--night); padding-top: 0;">
+    <div class="program-inner" style="padding: 80px 48px;">
+      <div class="section-eyebrow reveal">Festival programa</div>
+
+      <div class="days-grid">
+
+        <!-- DAN 1 -->
+        <div class="day-card reveal">
+          <div class="day-roman">I</div>
+          <div class="day-label">Prva večer</div>
+          <ul class="film-list">
+            <li class="film-item">
+              <span class="film-type">Film</span>
+              <span class="film-name">Keeping the Faith</span>
+            </li>
+            <li class="film-item">
+              <span class="film-type">Film</span>
+              <span class="film-name">L'Auberge Espagnole</span>
+            </li>
+            <li class="film-separator">Kratki program</li>
+            <li class="film-item">
+              <span class="film-type doc">Dok.</span>
+              <span class="film-name">On Cinema &amp; Time — Linklater</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- DAN 2 -->
+        <div class="day-card reveal">
+          <div class="day-roman">II</div>
+          <div class="day-label">Druga večer</div>
+          <ul class="film-list">
+            <li class="film-item">
+              <span class="film-type">Film</span>
+              <span class="film-name">Lisbon Story</span>
+            </li>
+            <li class="film-item">
+              <span class="film-type">Film</span>
+              <span class="film-name">Metropolitan</span>
+            </li>
+            <li class="film-separator">Kratki program</li>
+            <li class="film-item">
+              <span class="film-type anim">Animirani</span>
+              <span class="film-name">Paperman</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- DAN 3 -->
+        <div class="day-card reveal">
+          <div class="day-roman">III</div>
+          <div class="day-label">Treća večer</div>
+          <ul class="film-list">
+            <li class="film-item">
+              <span class="film-type">Film</span>
+              <span class="film-name">Moonstruck</span>
+            </li>
+            <li class="film-item">
+              <span class="film-type">Film</span>
+              <span class="film-name">Reality Bites</span>
+            </li>
+            <li class="film-separator">Kratki program</li>
+            <li class="film-item">
+              <span class="film-type art">Umjetnost</span>
+              <span class="film-name">Faces Places</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- DAN 4 -->
+        <div class="day-card reveal">
+          <div class="day-roman">IV</div>
+          <div class="day-label">Četvrta večer</div>
+          <ul class="film-list">
+            <li class="film-item">
+              <span class="film-type">Film</span>
+              <span class="film-name">Stealing Beauty</span>
+            </li>
+            <li class="film-item">
+              <span class="film-type">Film</span>
+              <span class="film-name">This Summer Feeling</span>
+            </li>
+            <li class="film-separator">Kratki program</li>
+            <li class="film-item">
+              <span class="film-type home">Domaći</span>
+              <span class="film-name">Kratki domaći film</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- FILMSTRIP -->
+  <div style="background: var(--night); overflow:hidden;">
+    <div class="filmstrip" id="filmstrip-mid"></div>
+  </div>
+
+  <!-- LOKACIJA -->
+  <section id="lokacija">
+    <div class="section-eyebrow reveal">Gdje se nalazimo</div>
+    <div class="location-grid">
+
+      <div class="location-visual reveal">
+        <!--
+          Zamijeni src s putanjom do svoje slike, npr:
+          <img src="images/motovun.jpg" alt="Motovun, Istra" />
+          Za sad je prikazan placeholder.
+        -->
+        <div class="hero-image-placeholder">
+          <div class="placeholder-icon">⬡</div>
+          <span class="placeholder-text">Vaša fotografija ovdje</span>
+        </div>
+        <!-- Corner accents -->
+        <div class="frame-corner tl"></div>
+        <div class="frame-corner tr"></div>
+        <div class="frame-corner bl"></div>
+        <div class="frame-corner br"></div>
+      </div>
+
+
+      <div class="location-info reveal">
+        <h2>Tvrđava na vrhu<br><em>mediteranskog neba</em></h2>
+        <p>
+          Smjestiti se pod zidinama Motovuna — jednog od najočuvanijih 
+          srednjovjekovnih gradova Istre — znači gledati filmove okruženi 
+          stoljetnim kamenom, s pogledom na vinogradima pokrivene brežuljke 
+          koji se gube u noći.
+        </p>
+        <div class="location-detail">
+          <div class="loc-row">
+            <div class="loc-icon">◎</div>
+            <span>Motovun, Istra, Hrvatska</span>
+          </div>
+          <div class="loc-row">
+            <div class="loc-icon">◈</div>
+            <span>Projekcije počinju u 21:30 — pri padu mraka</span>
+          </div>
+          <div class="loc-row">
+            <div class="loc-icon">◇</div>
+            <span>Slobodan ulaz, sjedenje na travi</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FILMSTRIP -->
+  <div style="overflow:hidden; max-width:100%;">
+    <div class="filmstrip" id="filmstrip-bot"></div>
+  </div>
+
+  <!-- KONTAKT -->
+  <section id="kontakt">
+    <div class="section-eyebrow reveal" style="justify-content:center; text-align:center;">Pišite nam</div>
+    <h2 class="reveal">Imate <em>pitanje?</em></h2>
+    <p class="reveal">Slobodno nam se javite — odgovaramo u roku od 24 sata.</p>
+
+    <form class="contact-form reveal" onsubmit="handleSubmit(event)">
+      <div class="form-row">
+        <div class="field">
+          <label for="ime">Ime i prezime</label>
+          <input type="text" id="ime" name="ime" placeholder="Vaše ime" required />
+        </div>
+        <div class="field">
+          <label for="email">E-mail adresa</label>
+          <input type="email" id="email" name="email" placeholder="vas@email.com" required />
+        </div>
+      </div>
+      <div class="field">
+        <label for="tema">Tema upita</label>
+        <select id="tema" name="tema">
+          <option value="">Odaberite temu</option>
+          <option value="program">Program i filmovi</option>
+          <option value="lokacija">Informacije o lokaciji</option>
+          <option value="suradnja">Suradnja i sponzorstvo</option>
+          <option value="ostalo">Ostalo</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="poruka">Poruka</label>
+        <textarea id="poruka" name="poruka" placeholder="Vaša poruka..." required></textarea>
+      </div>
+      <button type="submit" class="btn-submit">Pošaljite poruku</button>
+    </form>
+
+    <div id="form-success" style="display:none; margin-top:32px; text-align:center; color: var(--gold); font-family:'Fraunces',serif; font-size:1.3rem; font-weight:300; font-style:italic;">
+      Poruka primljena — vidimo se pod zvijezdama ✦
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Ljetno kino pod zvijezdama</div>
+    <div class="footer-note">© 2026 · Motovun, Istra</div>
+  </footer>
+
+  <script>
+    // ─── Projector dust particles ───
+    const dustEl = document.getElementById('projDust');
+    for (let i = 0; i < 14; i++) {
+      const d = document.createElement('div');
+      d.classList.add('dust');
+      const dur = (Math.random() * 3 + 2.5).toFixed(1);
+      const del = (Math.random() * 4).toFixed(1);
+      const fx  = (Math.random() * 80 + 10).toFixed(0);
+      const fy  = -(Math.random() * 100 + 40).toFixed(0);
+      const lx  = (Math.random() * 60).toFixed(0);
+      const ly  = (Math.random() * 50).toFixed(0);
+      d.style.cssText = `left:${lx}px; top:${ly}px; --fd:${dur}s; --fdel:${del}s; --fx:${fx}px; --fy:${fy}px;`;
+      dustEl.appendChild(d);
+    }
+
+    // ─── Stars generator ───
+    const starsEl = document.getElementById('stars');
+    const starCount = 90;
+    for (let i = 0; i < starCount; i++) {
+      const s = document.createElement('div');
+      s.classList.add('star');
+      const size = Math.random() * 2 + 0.5;
+      const x = Math.random() * 100;
+      const y = Math.random() * 70;
+      const dur = (Math.random() * 4 + 2).toFixed(1);
+      const del = (Math.random() * 4).toFixed(1);
+      const minO = (Math.random() * 0.15 + 0.05).toFixed(2);
+      const maxO = (Math.random() * 0.5 + 0.5).toFixed(2);
+      s.style.cssText = `
+        width:${size}px; height:${size}px;
+        left:${x}%; top:${y}%;
+        --d:${dur}s; --del:${del}s;
+        --min:${minO}; --max:${maxO};
+      `;
+      starsEl.appendChild(s);
+    }
+
+    // ─── Filmstrip generator ───
+    ['filmstrip-top','filmstrip-mid','filmstrip-bot'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      for (let i = 0; i < 60; i++) {
+        const s = document.createElement('span');
+        el.appendChild(s);
+      }
+    });
+
+    // ─── Scroll reveal ───
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(r => observer.observe(r));
+
+    // ─── Form submit mock ───
+    function handleSubmit(e) {
+      e.preventDefault();
+      e.target.style.display = 'none';
+      document.getElementById('form-success').style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>
